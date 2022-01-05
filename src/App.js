@@ -9,7 +9,11 @@ const CONTRACT_ADDRESS = "0xd280Dd88B224dAE6376aB3351305333b93F1745F";
 
 export default function App() {
   // State variable to store our user's public wallet
+  const [wavePortalContract, setWavePortalContract] = useState();
   const [currentAccount, setCurrentAccount] = useState("");
+  const [totalWaves, setTotalWaves] = useState();
+  const [wavers, setWavers] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const contractAbi = WavePortalContract.abi;
 
@@ -39,10 +43,50 @@ export default function App() {
     }
   }
 
+  const getContract = () => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log("Ethereum object doesn't exist!");
+        return;
+      }
+
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi, signer);
+
+      setWavePortalContract(contract);
+    } catch (error) {
+        console.error(error);
+      }
+  }
+
   // This runs our function when the page loads.
   useEffect(() => {
     checkIfWalletIsConnected();
+    getContract();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const getTotalWaveCount = async () => {
+    const count = await wavePortalContract.getTotalWaves();
+    console.log("Retrieved total wave count...", count.toNumber());
+    setTotalWaves(count.toNumber());
+  }
+
+  const getWavers = async () => {
+    const waversList = await wavePortalContract.getWavers();
+    console.log("Retrieved wavers...", waversList);
+    setWavers(waversList);
+  }
+
+  useEffect(() => {
+    if (wavePortalContract) {
+      getTotalWaveCount();
+      getWavers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wavePortalContract])
 
   const connectWallet = async () => {
     try {
@@ -64,6 +108,7 @@ export default function App() {
   }
 
   const wave = async () => {
+    setIsLoading(true);
     try {
       const { ethereum } = window;
 
@@ -78,6 +123,7 @@ export default function App() {
 
       let count = await wavePortalContract.getTotalWaves();
       console.log("Retrieved total wave count...", count.toNumber());
+      setTotalWaves(count.toNumber());
 
       // Execute wave from smart contract
       const waveTxn = await wavePortalContract.wave();
@@ -88,9 +134,11 @@ export default function App() {
 
       count = await wavePortalContract.getTotalWaves();
       console.log("Retrieved total wave count...", count.toNumber());
+      setTotalWaves(count.toNumber());
     } catch (error) {
       console.error(error);
     }
+    setIsLoading(false);
   }
 
   return (
@@ -105,8 +153,8 @@ export default function App() {
           My name is Varick and I'm <strike>unemployed</strike> building the future of the internet with web3! Connect your Ethereum wallet and wave at me ;)
         </div>
 
-        <button className="waveButton" onClick={wave}>
-          Wave at Me
+        <button disabled={isLoading} className="waveButton" onClick={wave}>
+          {isLoading ? <div id="spinner" /> : "Wave at Me"}
         </button>
 
         {/* If there is no currentAccount render this button */}
@@ -115,6 +163,16 @@ export default function App() {
             Connect Wallet
           </button>
         )}
+
+        {!!totalWaves && (
+          <div className="totalWaves">
+            {totalWaves} waves so far
+          </div>
+        )}
+
+        {wavers.map((waver, index) => (
+          <div className="waver" key={index}>{waver}</div>
+        ))}
       </div>
     </div>
   );
