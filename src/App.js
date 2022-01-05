@@ -42,7 +42,7 @@ export default function App() {
       console.log(error);
     }
   }
-  
+
   const getContract = () => {
     try {
       const { ethereum } = window;
@@ -56,11 +56,9 @@ export default function App() {
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi, signer);
 
       setWavePortalContract(contract);
-
-      contract.getTotalWaves();
     } catch (error) {
-        console.error(error);
-      }
+      console.error(error);
+    }
   }
 
   const getTotalWaveCount = async () => {
@@ -78,18 +76,15 @@ export default function App() {
   // This runs our function when the page loads.
   useEffect(() => {
     checkIfWalletIsConnected();
+    getContract();
   }, [])
 
   useEffect(() => {
-    if (currentAccount) getContract();
-  }, [currentAccount])
-
-  useEffect(() => {
-    if (wavePortalContract) {
+    if (currentAccount) {
       getTotalWaveCount();
       getWavers();
     }
-  }, [wavePortalContract])
+  }, [currentAccount])
 
   const connectWallet = async () => {
     try {
