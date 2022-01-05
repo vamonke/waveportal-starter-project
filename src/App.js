@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
+/* eslint-disable no-unused-vars */
+
 import * as React from "react";
 import { ethers } from "ethers";
 import './App.css';
@@ -7,17 +10,17 @@ export default function App() {
   const wave = () => {
     
   }
-  
+
   return (
     <div className="mainContainer">
 
       <div className="dataContainer">
         <div className="header">
-        👋 Hey there!
+          👋  Hi there!
         </div>
 
         <div className="bio">
-        I am farza and I worked on self-driving cars so that's pretty cool right? Connect your Ethereum wallet and wave at me!
+          My name is Varick and I'm <strike>unemployed</strike> building the future of the internet with web3! Connect your Ethereum wallet and wave at me ;)
         </div>
 
         <button className="waveButton" onClick={wave}>
