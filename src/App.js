@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/accessible-emoji */
 
 import { ethers } from "ethers";
@@ -24,8 +25,7 @@ export default function App() {
 
       if (!ethereum) {
         console.log("Make sure you have metamask!");
-      } else {
-        console.log("We have the ethereum object", ethereum);
+        return;
       }
 
       // Check if we're authorized to access the user's wallet
@@ -42,7 +42,7 @@ export default function App() {
       console.log(error);
     }
   }
-
+  
   const getContract = () => {
     try {
       const { ethereum } = window;
@@ -56,36 +56,39 @@ export default function App() {
       const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi, signer);
 
       setWavePortalContract(contract);
+
+      contract.getTotalWaves();
     } catch (error) {
         console.error(error);
       }
   }
 
-  // This runs our function when the page loads.
-  useEffect(() => {
-    checkIfWalletIsConnected();
-    getContract();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const getTotalWaveCount = async () => {
     const count = await wavePortalContract.getTotalWaves();
-    console.log("Retrieved total wave count...", count.toNumber());
+    // console.log("Retrieved total wave count...", count.toNumber());
     setTotalWaves(count.toNumber());
   }
 
   const getWavers = async () => {
     const waversList = await wavePortalContract.getWavers();
-    console.log("Retrieved wavers...", waversList);
+    // console.log("Retrieved wavers...", waversList);
     setWavers(waversList);
   }
+
+  // This runs our function when the page loads.
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
+
+  useEffect(() => {
+    if (currentAccount) getContract();
+  }, [currentAccount])
 
   useEffect(() => {
     if (wavePortalContract) {
       getTotalWaveCount();
       getWavers();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wavePortalContract])
 
   const connectWallet = async () => {
@@ -132,9 +135,8 @@ export default function App() {
       await waveTxn.wait();
       console.log("Mined -- ", waveTxn.hash);
 
-      count = await wavePortalContract.getTotalWaves();
-      console.log("Retrieved total wave count...", count.toNumber());
-      setTotalWaves(count.toNumber());
+      await getTotalWaveCount();
+      await getWavers();
     } catch (error) {
       console.error(error);
     }
@@ -153,9 +155,11 @@ export default function App() {
           My name is Varick and I'm <strike>unemployed</strike> building the future of the internet with web3! Connect your Ethereum wallet and wave at me ;)
         </div>
 
-        <button disabled={isLoading} className="waveButton" onClick={wave}>
-          {isLoading ? <div id="spinner" /> : "Wave at Me"}
-        </button>
+        {currentAccount && (
+          <button disabled={isLoading} className="waveButton" onClick={wave}>
+            {isLoading ? <div id="spinner" /> : "Wave at Me"}
+          </button>
+        )}
 
         {/* If there is no currentAccount render this button */}
         {!currentAccount && (
@@ -166,7 +170,7 @@ export default function App() {
 
         {!!totalWaves && (
           <div className="totalWaves">
-            {totalWaves} waves so far
+            We've already collected {totalWaves} waves!
           </div>
         )}
 
