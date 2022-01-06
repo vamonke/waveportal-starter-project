@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/accessible-emoji */
 
@@ -41,25 +42,32 @@ export default function App() {
   }
 
   const getTotalWaveCount = async () => {
+    try {
+      const { ethereum } = window;
+      if (!ethereum) {
+        console.log("Ethereum object doesn't exist!");
+        return;
+      }
 
-    const { ethereum } = window;
-    if (!ethereum) {
-      console.log("Ethereum object doesn't exist!");
-      return;
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+      const wavePortalContract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi, signer);
+
+      console.log('Retrieving number of waves..');
+      const count = await wavePortalContract.getTotalWaves();
+      console.log('Total number of waves:', count.toNumber());
+      setTotalWaves(count.toNumber());
+    } catch (error) {
+      console.log("Failed to get total number of waves.", error);
     }
-
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const wavePortalContract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi, signer);
-
-    const count = await wavePortalContract.getTotalWaves();
-    setTotalWaves(count.toNumber());
   }
 
   // This runs our function when the page loads.
   useEffect(() => {
-    checkIfWalletIsConnected();
-    getTotalWaveCount();
+    (async () => {
+      await checkIfWalletIsConnected();
+      await getTotalWaveCount();
+    })();
   }, [])
 
   const connectWallet = async () => {
