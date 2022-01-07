@@ -1,23 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/accessible-emoji */
 
-import { ethers } from "ethers";
-import React, { useEffect, useState, useRef } from "react";
-import WavePortalContract from "./utils/WavePortal.json";
-import './App.css';
+import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Box,
+  Heading,
+  Button,
+  useToast,
+  Text,
+} from '@chakra-ui/react'
 
-const CONTRACT_ADDRESS = "0x11c49f04951A0f931FAb26C7029FB08b415fB43C";
+import WaveForm from "./components/WaveForm";
+import WaveCard from "./components/WavesGrid";
+import { getContract } from "./utils/contract";
+import './App.css';
 
 export default function App() {
   // State variable to store our user's public wallet
   const [currentAccount, setCurrentAccount] = useState("");
   const [allWaves, setAllWaves] = useState([]);
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const formRef = useRef(null);
-
-  const contractABI = WavePortalContract.abi;
+  const toast = useToast()
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -55,11 +58,7 @@ export default function App() {
         return;
       }
 
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const wavePortalContract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
-
-      // Call the getAllWaves method from your Smart Contract
+      const wavePortalContract = getContract();
       const waves = await wavePortalContract.getAllWaves();
 
       // We only need address, timestamp, and message
@@ -74,7 +73,7 @@ export default function App() {
       });
 
       // Store our data in React State
-      setAllWaves(wavesCleaned);
+      setAllWaves(wavesCleaned.reverse());
     } catch (error) {
       console.log(error);
     }
@@ -92,7 +91,6 @@ export default function App() {
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         alert("Get MetaMask!");
         return;
@@ -108,92 +106,114 @@ export default function App() {
     }
   }
 
-  const handleOnChange = (event) => {
-    const value = event.target.value;
-    setMessage(value);
-  }
-
-  const wave = async (event) => {
-    event.preventDefault();
-    setIsLoading(true);
+  const wave = async (message) => {
     try {
       const { ethereum } = window;
-
       if (!ethereum) {
         console.log("Ethereum object doesn't exist!");
         return;
       }
 
-      const provider = new ethers.providers.Web3Provider(ethereum);
-      const signer = provider.getSigner();
-      const wavePortalContract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
-
-      // Execute wave from smart contract
+      const wavePortalContract = getContract();
       const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 });
       console.log("Mining", waveTxn.hash);
 
       await waveTxn.wait();
       console.log("Mined -- ", waveTxn.hash);
-
-      setMessage("");
-      formRef.current.reset();
-      getAllWaves();
+      
+      toast({
+        title: 'Transmition success',
+        description: "Your wave has been stored in the blockchain.",
+        status: 'success',
+        position: "top",
+        duration: 9000,
+        isClosable: true,
+      });
     } catch (error) {
       console.error(error);
+      toast({
+        title: 'Oops!',
+        description: "Something went wrong :(",
+        status: 'success',
+        position: "top",
+        duration: 9
+      });
     }
-    setIsLoading(false);
   }
 
+  /**
+   * Listen in for emitter events!
+   */
+  useEffect(() => {
+    let wavePortalContract;
+
+    const onNewWave = (from, timestamp, message) => {
+      console.log("NewWave", from, timestamp, message);
+      setAllWaves(prevState => [
+        ...prevState,
+        {
+          address: from,
+          timestamp: new Date(timestamp * 1000),
+          message: message,
+        },
+      ]);
+    };
+
+    const { ethereum } = window;
+    if (ethereum) {
+      const wavePortalContract = getContract();
+      wavePortalContract.on("NewWave", onNewWave);
+    }
+
+    return () => {
+      if (wavePortalContract) {
+        wavePortalContract.off("NewWave", onNewWave);
+      }
+    };
+  }, []);
+
   return (
-    <div className="mainContainer">
+    <Box
+      py={24}
+      bgImage="url(/background.jpg)"
+      bgSize="cover"
+      bgPos="center"
+      bgRepeat="none"
+      bgAttachment="fixed"
+      minH="100vh"
+    >
+      <Container maxW="container.sm">
+        <Box>
+          <Heading fontWeight="bold">
+            Hi there, I'm <Text as="span" color="yellow.400">Varick</Text> 🧑‍🚀
+          </Heading>
 
-      <div className="dataContainer">
-        <div className="header">
-          👋  Hi there!
-        </div>
+          <Box mt={4} fontSize={18}>
+            I'm <strike>an astronaut</strike> building the future of the internet with Web3! Connect your Ethereum wallet and wave at me using the power of blockchain ;)
+          </Box>
 
-        <div className="bio">
-          My name is Varick and I'm <strike>unemployed</strike> building the future of the internet with web3! Connect your Ethereum wallet and wave at me ;)
-        </div>
+          {currentAccount ? (
+            <WaveForm submit={wave} />
+          ) : (
+            <Button
+              size="lg"
+              mt={6}
+              bg="white"
+              color="gray.800"
+              type="submit"
+              width="100%"
+              onClick={connectWallet}
+            >
+              Connect Wallet
+            </Button>
+          )}
 
-        {currentAccount && (
-          <form ref={formRef} onSubmit={wave}>
-            <input
-              type="text"
-              placeholder="Your message goes here"
-              onChange={handleOnChange}
-              disabled={isLoading}
-            />
-            <button disabled={isLoading} className="waveButton" type="submit">
-              {isLoading ? <div id="spinner" /> : "Wave at Me"}
-            </button>
-          </form>
-        )}
+        </Box>
 
-        {/* If there is no currentAccount render this button */}
-        {!currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
+        <WaveCard waves={allWaves} />
+      </Container>
 
-        <hr />
-
-        {!!allWaves.length && (
-          <div className="totalWaves">
-            We've already collected {allWaves.length} waves!
-          </div>
-        )}
-
-        {allWaves.map((wave, index) => {
-          return (
-            <div key={index} className="wave">
-              <div>Address: {wave.address}</div>
-              <div>Time: {wave.timestamp.toString()}</div>
-              <div>Message: {wave.message}</div>
-            </div>)
-        })}
-      </div>
-    </div>
+      {/* <div>Icons made by <a href="" title="Victoruler">Victoruler</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */}
+    </Box>
   );
 }
