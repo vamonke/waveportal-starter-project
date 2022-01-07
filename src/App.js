@@ -126,7 +126,7 @@ export default function App() {
         description: "Your wave has been stored in the blockchain.",
         status: 'success',
         position: "top",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     } catch (error) {
@@ -136,7 +136,7 @@ export default function App() {
         description: "Something went wrong :(",
         status: 'success',
         position: "top",
-        duration: 9
+        duration: 5000,
       });
     }
   }
