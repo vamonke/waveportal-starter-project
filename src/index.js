@@ -22,7 +22,7 @@ const theme = extendTheme({
       },
       // styles for the `a`
       a: {
-        color: 'teal.500',
+        color: 'teal.400',
         _hover: {
           textDecoration: 'underline',
         },

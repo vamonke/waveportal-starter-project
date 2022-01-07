@@ -12,7 +12,8 @@ import {
 } from '@chakra-ui/react'
 
 import WaveForm from "./components/WaveForm";
-import WaveCard from "./components/WavesGrid";
+import WavesGrid from "./components/WavesGrid";
+import Attribution from "./components/Attribution";
 import { getContract } from "./utils/contract";
 import './App.css';
 
@@ -174,7 +175,8 @@ export default function App() {
 
   return (
     <Box
-      py={24}
+      pt={24}
+      pb={32}
       bgImage="url(/background.jpg)"
       bgSize="cover"
       bgPos="center"
@@ -188,7 +190,7 @@ export default function App() {
             Hi there, I'm <Text as="span" color="yellow.400">Varick</Text> 🧑‍🚀
           </Heading>
 
-          <Box mt={4} fontSize={18}>
+          <Box mt={5} fontSize={18}>
             I'm <strike>an astronaut</strike> building the future of the internet with Web3! Connect your Ethereum wallet and wave at me using the power of blockchain ;)
           </Box>
 
@@ -210,8 +212,10 @@ export default function App() {
 
         </Box>
 
-        <WaveCard waves={allWaves} />
+        <WavesGrid waves={allWaves} />
+
       </Container>
+      <Attribution />
 
       {/* <div>Icons made by <a href="" title="Victoruler">Victoruler</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */}
     </Box>
