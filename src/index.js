@@ -12,17 +12,16 @@ import App from './App';
 const theme = extendTheme({
   styles: {
     global: {
-      // styles for the `body`
       body: {
-        bg: 'gray.800',
         color: 'white',
-      },
-      heading: {
         fontFamily: "Space Mono",
       },
-      // styles for the `a`
+      input: {
+        bg: 'white',
+        color: 'gray.800',
+      },
       a: {
-        color: 'teal.400',
+        color: 'pink.400',
         _hover: {
           textDecoration: 'underline',
         },
@@ -30,10 +29,8 @@ const theme = extendTheme({
     },
   },
   fonts: {
-    heading: 'Space Mono',
-    body: 'Space Mono',
-    code: 'Space Mono',
-  },
+    heading: "Space Mono",
+  }
 })
 
 ReactDOM.render(

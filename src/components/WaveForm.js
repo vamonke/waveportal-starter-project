@@ -2,16 +2,14 @@ import {
   Input,
   Button,
   Box,
-  Spinner,
   Flex,
 } from '@chakra-ui/react'
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/accessible-emoji */
 
 import React, { useState, useRef } from "react";
 
 const WaveForm = (props) => {
-  const { submit } = props;
+  const { submit, account } = props;
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,45 +28,56 @@ const WaveForm = (props) => {
     setIsLoading(false);
   }
 
-  const isDisabled = !message || isLoading;
-
   return (
     <Box
       as="form"
       ref={formRef}
       onSubmit={wave}
-      py={6}
+      my={8}
+      p={6}
+      bgColor="#251b46"
+      borderRadius="lg"
+      boxShadow={`0 0 40px -25px #FFF`}
     >
+      <Flex
+        fontSize="sm"
+        justifyContent="space-between"
+        color="gray.300"
+      >
+        <Box>
+          Your account:
+        </Box>
+        <Box>
+          {account}
+        </Box>
+      </Flex>
       <Input
+        mt={3}
         type="text"
         size="lg"
         placeholder="Your message goes here"
         onChange={handleOnChange}
         disabled={isLoading}
-        _focus={{
-          bg: "#251b46"
-        }}
+        bg="rgba(255, 255, 255, 1)"
+        colorScheme="gray"
+        variant="outline"
+        required
+        autoFocus
       />
-      <Button
-        disabled={isDisabled}
-        mt={4}
-        size="lg"
-        bg="white"
-        color="gray.800"
-        type="submit"
-        width="100%"
-      >
-        {isLoading ? (
-          <Flex
-            justifyContent="center"
-            alignContent="center"
-          >
-            <Spinner size="sm" mr={3} />
-            Transmitting wave..
-          </Flex>
-        ) : "👋  Wave at me"
-        }
-      </Button>
+      <Flex justifyContent="center">
+        <Button
+          isLoading={isLoading}
+          mt={4}
+          size="lg"
+          color="white"
+          colorScheme="pink"
+          type="submit"
+          width="100%"
+          loadingText='Transmitting wave..'
+        >
+          👋  Wave at me
+        </Button>
+      </Flex>
     </Box>
   );
 }

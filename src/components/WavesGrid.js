@@ -46,34 +46,13 @@ const WaveCard = (props) => {
 }
 
 const WavesGrid = ({ waves }) => (
-  <Box mt={6}>
+  <Box mt={10}>
     {!!waves.length && (
       <Heading fontSize={18} fontWeight={700} textAlign="center">
         Waves received: <Text as="span" fontWeight="bold" color="yellow.400">{waves.length}</Text>
       </Heading>
     )}
     <SimpleGrid columns={1} spacing={6} mt={8}>
-      {/* {waves.map((wave, index) => (
-        <WaveCard
-          key={index}
-          index={waves.length - index + 6}
-          {...wave}
-        />
-      ))}
-      {waves.map((wave, index) => (
-        <WaveCard
-          key={index}
-          index={waves.length - index + 4}
-          {...wave}
-        />
-      ))}
-      {waves.map((wave, index) => (
-        <WaveCard
-          key={index}
-          index={waves.length - index + 2}
-          {...wave}
-        />
-      ))} */}
       {waves.map((wave, index) => (
         <WaveCard
           key={index}

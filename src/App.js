@@ -15,7 +15,6 @@ import WaveForm from "./components/WaveForm";
 import WavesGrid from "./components/WavesGrid";
 import Attribution from "./components/Attribution";
 import { getContract } from "./utils/contract";
-import './App.css';
 
 export default function App() {
   // State variable to store our user's public wallet
@@ -186,16 +185,17 @@ export default function App() {
     >
       <Container maxW="container.sm">
         <Box>
-          <Heading fontWeight="bold">
+          <Heading fontWeight={700}>
             Hi there, I'm <Text as="span" color="yellow.400">Varick</Text> 🧑‍🚀
           </Heading>
-
           <Box mt={5} fontSize={18}>
             I'm <strike>an astronaut</strike> building the future of the internet with Web3! Connect your Ethereum wallet and wave at me using the power of blockchain ;)
           </Box>
-
           {currentAccount ? (
-            <WaveForm submit={wave} />
+            <WaveForm
+              submit={wave}
+              account={currentAccount}
+            />
           ) : (
             <Button
               size="lg"
@@ -209,15 +209,10 @@ export default function App() {
               Connect Wallet
             </Button>
           )}
-
         </Box>
-
         <WavesGrid waves={allWaves} />
-
       </Container>
       <Attribution />
-
-      {/* <div>Icons made by <a href="" title="Victoruler">Victoruler</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> */}
     </Box>
   );
 }
