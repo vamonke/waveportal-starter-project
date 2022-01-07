@@ -181,6 +181,7 @@ export default function App() {
       bgPos="center"
       bgRepeat="none"
       bgAttachment="fixed"
+      bgColor="#2D0B51"
       minH="100vh"
     >
       <Container maxW="container.sm">
