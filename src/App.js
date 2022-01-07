@@ -6,7 +6,7 @@ import React, { useEffect, useState, useRef } from "react";
 import WavePortalContract from "./utils/WavePortal.json";
 import './App.css';
 
-const CONTRACT_ADDRESS = "0x19B5efb464406b35E801D9b1a20688B9D6f8B3E9";
+const CONTRACT_ADDRESS = "0x11c49f04951A0f931FAb26C7029FB08b415fB43C";
 
 export default function App() {
   // State variable to store our user's public wallet
@@ -129,7 +129,7 @@ export default function App() {
       const wavePortalContract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
 
       // Execute wave from smart contract
-      const waveTxn = await wavePortalContract.wave(message)
+      const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 });
       console.log("Mining", waveTxn.hash);
 
       await waveTxn.wait();
