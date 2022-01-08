@@ -33,7 +33,6 @@ const WaveForm = (props) => {
       as="form"
       ref={formRef}
       onSubmit={wave}
-      my={8}
       p={6}
       bgColor="#251b46"
       borderRadius="lg"

@@ -6,7 +6,6 @@ import {
   Container,
   Box,
   Heading,
-  Button,
   useToast,
   Text,
 } from '@chakra-ui/react'
@@ -15,6 +14,7 @@ import WaveForm from "./components/WaveForm";
 import WavesGrid from "./components/WavesGrid";
 import Attribution from "./components/Attribution";
 import { getContract } from "./utils/contract";
+import ConnectWallet from "./components/ConnectWallet";
 
 export default function App() {
   // State variable to store our user's public wallet
@@ -87,24 +87,6 @@ export default function App() {
   useEffect(() => {
     if (currentAccount) getAllWaves();
   }, [currentAccount])
-
-  const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        alert("Get MetaMask!");
-        return;
-      }
-
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-      const firstAccount = accounts[0];
-
-      console.log("Connected", firstAccount);
-      setCurrentAccount(firstAccount);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   const wave = async (message) => {
     try {
@@ -192,24 +174,16 @@ export default function App() {
           <Box mt={5} fontSize={18}>
             I'm <strike>an astronaut</strike> building the future of the internet with Web3! Connect your Ethereum wallet and wave at me using the power of blockchain ;)
           </Box>
-          {currentAccount ? (
-            <WaveForm
-              submit={wave}
-              account={currentAccount}
-            />
-          ) : (
-            <Button
-              size="lg"
-              mt={6}
-              bg="white"
-              color="gray.800"
-              type="submit"
-              width="100%"
-              onClick={connectWallet}
-            >
-              Connect Wallet
-            </Button>
-          )}
+          <Box mt={8}>
+            {currentAccount ? (
+              <WaveForm
+                submit={wave}
+                account={currentAccount}
+              />
+            ) : (
+              <ConnectWallet setCurrentAccount={setCurrentAccount} />
+            )}
+          </Box>
         </Box>
         <WavesGrid waves={allWaves} />
       </Container>

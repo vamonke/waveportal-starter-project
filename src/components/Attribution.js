@@ -1,10 +1,5 @@
-import {
-  Box,
-} from '@chakra-ui/react'
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable jsx-a11y/accessible-emoji */
-
 import React from "react";
+import { Box } from '@chakra-ui/react'
 
 const Attribution = () => (
   <Box
