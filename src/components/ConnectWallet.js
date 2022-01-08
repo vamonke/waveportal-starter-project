@@ -20,10 +20,10 @@ const ConnectWallet = ({ setCurrentAccount }) => {
       setCurrentAccount(firstAccount);
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
+
   return (
     <Button
       isLoading={isLoading}

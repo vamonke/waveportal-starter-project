@@ -115,7 +115,7 @@ export default function App() {
       console.error(error);
       toast({
         title: 'Oops!',
-        description: "Something went wrong :(",
+        description: "Something went wrong :( Try again in 5 mins.",
         status: 'success',
         position: "top",
         duration: 5000,
