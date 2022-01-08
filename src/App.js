@@ -132,12 +132,12 @@ export default function App() {
     const onNewWave = (from, timestamp, message) => {
       console.log("NewWave", from, timestamp, message);
       setAllWaves(prevState => [
-        ...prevState,
         {
           address: from,
           timestamp: new Date(timestamp * 1000),
           message: message,
         },
+        ...prevState,
       ]);
     };
 
