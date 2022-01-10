@@ -21,7 +21,7 @@ const WaveCard = (props) => {
   const color = COLORS[index % 5];
   return (
     <Flex
-      direction="column"
+      direction="row"
       bg="#251b46"
       borderWidth={1}
       borderStyle={"solid"}
@@ -32,15 +32,22 @@ const WaveCard = (props) => {
       fontFamily="Space Mono"
       fontSize="md"
     >
-      <Box>
-        <Text as="span" color="gray.500">From:</Text> {address}
+      <Box py={3} px={1} mr={6} fontSize="3xl">
+        <span role="img" aria-label="wave">
+          👋
+        </span>
       </Box>
-      <Box>
-        <Text as="span" color="gray.500">Sent at:</Text> {timestamp.toLocaleString()}
-      </Box>
-      <Box>
-        <Text as="span" color="gray.500">Message:</Text> {message}
-      </Box>
+      <Flex direction="column">
+        <Box>
+          <Text as="span" color="gray.500">From:</Text> {address}
+        </Box>
+        <Box>
+          <Text as="span" color="gray.500">Sent at:</Text> {timestamp.toLocaleString()}
+        </Box>
+        <Box>
+          <Text as="span" color="gray.500">Message:</Text> {message}
+        </Box>
+      </Flex>
     </Flex>
   );
 }
